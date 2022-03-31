@@ -152,11 +152,11 @@ namespace SBCentralControl
                     newProcess.Start();
                     Log("SmartBot启动中...");
                     System.Threading.Thread.Sleep(30000);
-                }
-                processesByName = Process.GetProcessesByName(text.Replace(".exe", ""));
-                if (processesByName.Length > 0) 
-                {
-                    Log("SmartBot启动成功...");
+                    processesByName = Process.GetProcessesByName(text.Replace(".exe", ""));
+                    if (processesByName.Length > 0)
+                    {
+                        Log("SmartBot启动成功...");
+                    }
                 }
                 foreach (Process process in processesByName)
                 {
