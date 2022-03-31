@@ -32,6 +32,17 @@ namespace SmartBotReceiveMsg
         private static extern int GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, StringBuilder lpReturnedString, int nSize, string lpFileName);
 
         /// <summary>
+        /// 修改INI文件中内容
+        /// </summary>
+        /// <param name="lpApplicationName">欲在其中写入的节点名称</param>
+        /// <param name="lpKeyName">欲设置的项名</param>
+        /// <param name="lpString">要写入的新字符串</param>
+        /// <param name="lpFileName">INI文件完整路径</param>
+        /// <returns>非零表示成功，零表示失败</returns>
+        [DllImport("kernel32")]
+        private static extern int WritePrivateProfileString(string lpApplicationName, string lpKeyName, string lpString, string lpFileName);
+
+        /// <summary>
         /// 读取INI文件值
         /// </summary>
         /// <param name="section">节点名</param>
@@ -71,12 +82,14 @@ namespace SmartBotReceiveMsg
                 {
                     Bot.Log("[SmartBotReceiveMsg] - 关闭炉石传说...");
                     Bot.CloseBot();
+                    WritePrivateProfileString("SmartBot", "CloseHs", false.ToString(), SBCentralControlIniPath);
                 }
                 System.Threading.Thread.Sleep(2000);
                 if (bool.Parse(Read("SmartBot", "StartRelogger", false.ToString(), SBCentralControlIniPath)))
                 {
                     Bot.Log("[SmartBotReceiveMsg] - 开启炉石传说...");
                     Bot.StartRelogger();
+                    WritePrivateProfileString("SmartBot", "StartRelogger", false.ToString(), SBCentralControlIniPath);
                 }
             }
             base.OnTick();
