@@ -142,6 +142,17 @@ namespace SBCentralControl
             if (!string.IsNullOrWhiteSpace(text))
             {
                 Process[] processesByName = Process.GetProcessesByName(text.Replace(".exe", ""));
+                if (processesByName.Length <= 0)
+                {
+                    //打开SB
+                    Process newProcess = new Process
+                    {
+                        StartInfo = new ProcessStartInfo(LauncherPath)
+                    };
+                    newProcess.Start();
+                    Log("SmartBot启动中...");
+                    System.Threading.Thread.Sleep(30000);
+                }
                 foreach (Process process in processesByName)
                 {
                     bool processHungFlag = IsHungAppWindow(process.Handle);
@@ -233,6 +244,25 @@ namespace SBCentralControl
                     timer2.Start();
                     button1.Text = "停止运行";
                     Log("SB中控已启动...");
+                    string text = string.Empty;
+                    if (File.Exists(BasePath))
+                    {
+                        text = File.ReadAllText(BasePath);
+                    }
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        Process[] processesByName = Process.GetProcessesByName(text.Replace(".exe", ""));
+                        if (processesByName.Length <= 0)
+                        {
+                            //打开SB
+                            Process newProcess = new Process
+                            {
+                                StartInfo = new ProcessStartInfo(LauncherPath)
+                            };
+                            newProcess.Start();
+                            Log("SmartBot启动中...");
+                        }
+                    }
                 }
                 else
                 {

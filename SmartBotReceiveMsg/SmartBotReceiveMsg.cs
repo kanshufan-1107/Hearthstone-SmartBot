@@ -3,6 +3,7 @@ using SmartBot.Plugins.API;
 using SmartBot.Plugins.SmartBotReceiveMsg;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -69,25 +70,61 @@ namespace SmartBotReceiveMsg
         {
             IsDll = true;
             Bot.Log("[SmartBotReceiveMsg] - SmartBotReceiveMsg插件已初始化成功...");
+            //配置信息
+            SmartBotReceiveMsgPluginData pluginData = GetPluginData();
+
+            if (pluginData.Enabled)
+            {
+                //获取炉石传说进程 Hearthstone
+                Process[] HearthstoneProcess = Process.GetProcessesByName("Hearthstone");
+                //自动启动炉石传说
+                if (pluginData.AutoOpenHSAndInject && HearthstoneProcess.Length <= 0)
+                {
+                    Bot.Log("[SmartBotReceiveMsg] - 启动炉石传说,准备脚本注入...");
+                    Bot.StartRelogger();
+                }
+            }
             base.OnPluginCreated();
+        }
+
+        public override void OnInjection()
+        {
+            //插件配置信息
+            SmartBotReceiveMsgPluginData pluginData = GetPluginData();
+            if (pluginData.Enabled)
+            {
+                if (pluginData.AutoStart)
+                {
+                    Bot.Log("[SmartBotReceiveMsg] - 脚本已注入,启动中...");
+                    Bot.StartBot();
+                }
+            }
+            base.OnInjection();
         }
 
         public override void OnTick()
         {
             //配置信息
             SmartBotReceiveMsgPluginData pluginData = GetPluginData();
+
+            if (pluginData.AutoStart && !Bot.IsBotRunning())
+            {
+                Bot.Log("[SmartBotReceiveMsg] - OnTick - SmartBot启动中...");
+                Bot.StartBot();
+            }
+
             if (pluginData.Enabled && File.Exists(SBCentralControlIniPath))
             {
                 if (bool.Parse(Read("SmartBot", "CloseHs", false.ToString(), SBCentralControlIniPath)))
                 {
-                    Bot.Log("[SmartBotReceiveMsg] - 关闭炉石传说...");
+                    Bot.Log("[SmartBotReceiveMsg] - OnTick - 关闭炉石传说...");
                     Bot.CloseBot();
                     WritePrivateProfileString("SmartBot", "CloseHs", false.ToString(), SBCentralControlIniPath);
                 }
                 System.Threading.Thread.Sleep(2000);
                 if (bool.Parse(Read("SmartBot", "StartRelogger", false.ToString(), SBCentralControlIniPath)))
                 {
-                    Bot.Log("[SmartBotReceiveMsg] - 开启炉石传说...");
+                    Bot.Log("[SmartBotReceiveMsg] - OnTick - 开启炉石传说...");
                     Bot.StartRelogger();
                     WritePrivateProfileString("SmartBot", "StartRelogger", false.ToString(), SBCentralControlIniPath);
                 }
