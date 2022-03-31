@@ -139,11 +139,14 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(6, 13);
+            this.textBox3.Location = new System.Drawing.Point(12, 20);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(404, 339);
+            this.textBox3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox3.Size = new System.Drawing.Size(404, 331);
             this.textBox3.TabIndex = 4;
+            this.textBox3.Enter += new System.EventHandler(this.TextBox3_Enter);
+            this.textBox3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TextBox3_Enter);
             // 
             // MainForm
             // 

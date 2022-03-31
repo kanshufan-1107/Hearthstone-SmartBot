@@ -40,6 +40,13 @@ namespace SBCentralControl
         /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        /// <summary>
+        /// 隐藏光标
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
+        [DllImport("user32", EntryPoint = "HideCaret")]
+        private static extern bool HideCaret(IntPtr hWnd);
 
         /// <summary>
         /// 确定系统是否认为指定的应用程序没有响应
@@ -59,6 +66,10 @@ namespace SBCentralControl
             //初始化页面信息
             textBox1.Text = DetectionFrequency.ToString();
             textBox2.Text = lscs_ckmc;
+            for (int i = 1; i <= 1000; i++)
+            {
+                if()
+            }
             bool flag = IsNumberic(textBox1.Text);
             if (flag)
             {
@@ -155,6 +166,16 @@ namespace SBCentralControl
                     newProcess.Start();
                 }
             }
+        }
+
+        private void TextBox3_Enter(object sender, EventArgs e)
+        {
+            HideCaret(textBox3.Handle);
+        }
+
+        private void TextBox3_MouseEnter(object sender, EventArgs e)
+        {
+            HideCaret(textBox3.Handle);
         }
 
         protected bool IsNumberic(string message)
