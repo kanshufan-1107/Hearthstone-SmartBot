@@ -25,6 +25,23 @@ namespace SBCentralControl
         /// </summary>
         string lscs_ckmc = "炉石传说";
         /// <summary>
+        /// 中控运行时间
+        /// </summary>
+        string yxsj = "00:00:00";
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        DateTime startTime;
+        /// <summary>
+        /// SB重启次数
+        /// </summary>
+        int sbRestartNum = 0;
+        /// <summary>
+        /// 炉石重启次数
+        /// </summary>
+        int hsRestartNum = 0;
+
+        /// <summary>
         /// 防检测程序文件夹
         /// </summary>
         private static readonly string BasePath = Environment.CurrentDirectory + Path.DirectorySeparatorChar.ToString() + "Temp" + Path.DirectorySeparatorChar.ToString() + "name.temp";
@@ -87,13 +104,16 @@ namespace SBCentralControl
         {
             //初始化页面信息
             textBox2.Text = lscs_ckmc;
+            textBox4.Text = yxsj;
+            textBox5.Text = sbRestartNum + "/" + hsRestartNum;
+
             textBox3.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] SB中控开始运行...";
             timer1.Stop();
             Log("以下为配置信息...");
-            LogByNoTime("======================================================");
+            LogByNoTime("=================================================================");
             Log("炉石窗口名称: " + lscs_ckmc);
             Log("中控检测频率: " + DetectionFrequency + "分钟");
-            LogByNoTime("======================================================");
+            LogByNoTime("=================================================================");
             bool flag = IsNumberic(textBox1.Text);
             if (flag)
             {
@@ -135,6 +155,8 @@ namespace SBCentralControl
                             StartInfo = new ProcessStartInfo(LauncherPath)
                         };
                         newProcess.Start();
+                        sbRestartNum++;
+                        textBox5.Text = sbRestartNum + "/" + hsRestartNum;
                     }
                 }
             }
@@ -148,6 +170,8 @@ namespace SBCentralControl
                 System.Threading.Thread.Sleep(5000);
                 //开启炉石传说
                 SendSmartBotMsg("StartRelogger");
+                hsRestartNum++;
+                textBox5.Text = sbRestartNum + "/" + hsRestartNum;
             }
         }
 
@@ -198,18 +222,25 @@ namespace SBCentralControl
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            Log(SBCentralControlIniPath);
             if (File.Exists(SBCentralControlIniPath)) 
             {
                 if (!timer1.Enabled)
                 {
+                    startTime = DateTime.Now;
+                    sbRestartNum = 0;
+                    hsRestartNum = 0;
                     timer1.Start();
+                    timer2.Start();
                     button1.Text = "停止运行";
                     Log("SB中控已启动...");
                 }
                 else
                 {
+                    textBox4.Text = "00:00:00";
+                    sbRestartNum = 0;
+                    hsRestartNum = 0;
                     timer1.Stop();
+                    timer2.Stop();
                     button1.Text = "开始运行";
                     Log("SB中控已停止...");
                 }
@@ -229,6 +260,21 @@ namespace SBCentralControl
         private void TextBox3_MouseEnter(object sender, EventArgs e)
         {
             HideCaret(textBox3.Handle);
+        }
+
+        private void TextBox4_MouseEnter(object sender, EventArgs e)
+        {
+            HideCaret(textBox4.Handle);
+        }
+
+        private void TextBox4_Enter(object sender, EventArgs e)
+        {
+            HideCaret(textBox4.Handle);
+        }
+
+        private void Timer2_Tick(object sender, EventArgs e)
+        {
+            textBox4.Text = Sec2Min(startTime);
         }
 
         /// <summary>
@@ -278,6 +324,27 @@ namespace SBCentralControl
         public void SendSmartBotMsg(string methodName) 
         {
             WritePrivateProfileString("SmartBot", methodName, true.ToString(), SBCentralControlIniPath);
+        }
+
+
+        private string Sec2Min(DateTime timeA)
+        {
+            DateTime timeB = DateTime.Now;
+            TimeSpan ts = timeB - timeA;
+            Int64 sec = (Int64)ts.TotalSeconds;
+
+            Int64 shi;
+            Int64 fen;
+            Int64 miao;
+            if (sec < 0)
+                sec = 0;
+            miao = sec % 60;
+            sec -= miao;
+            sec /= 60;
+            fen = sec % 60;
+            sec -= fen;
+            shi = sec / 60;
+            return string.Format("{0:00}:{1:00}:{2:00}", shi, fen, miao);
         }
     }
 }
