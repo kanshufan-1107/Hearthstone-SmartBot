@@ -107,12 +107,6 @@ namespace SmartBotReceiveMsg
             //配置信息
             SmartBotReceiveMsgPluginData pluginData = GetPluginData();
 
-            if (pluginData.AutoStart && !Bot.IsBotRunning())
-            {
-                Bot.Log("[SmartBotReceiveMsg] - OnTick - SmartBot启动中...");
-                Bot.StartBot();
-            }
-
             if (pluginData.Enabled && File.Exists(SBCentralControlIniPath))
             {
                 if (bool.Parse(Read("SmartBot", "CloseHs", false.ToString(), SBCentralControlIniPath)))

@@ -98,9 +98,6 @@ namespace SmartBot.Plugins.kanshufan
             height_ = 439;
             x_ = 1378;
             y_ = 608;
-            AutoOpenHSAndInject = true;
-            AutoStart = true;
-            AutoCheckIsHung = true;
         }
 
         [Category("Plugin")]
@@ -114,28 +111,7 @@ namespace SmartBot.Plugins.kanshufan
         }
 
         [Category("A.核心设置")]
-        [DisplayName("Ⅰ.炉石传说自启并注入脚本")]
-        public bool AutoOpenHSAndInject
-        {
-            get; set;
-        }
-
-        [Category("A.核心设置")]
-        [DisplayName("Ⅱ.插件自动开始")]
-        public bool AutoStart
-        {
-            get; set;
-        }
-
-        [Category("A.核心设置")]
-        [DisplayName("Ⅲ.检测炉石传说是否无响应,无响应自动重启")]
-        public bool AutoCheckIsHung
-        {
-            get; set;
-        }
-
-        [Category("A.核心设置")]
-        [DisplayName("Ⅳ.练级模式")]
+        [DisplayName("Ⅰ.练级模式")]
         [ItemsSource(typeof(Mode))]
         public Bot.Mode AutoMode
         {
@@ -143,7 +119,7 @@ namespace SmartBot.Plugins.kanshufan
         }
 
         [Category("A.核心设置")]
-        [DisplayName("Ⅴ.各个职业上限等级")]
+        [DisplayName("Ⅱ.各个职业上限等级")]
         public int Level
         {
             get
@@ -168,7 +144,7 @@ namespace SmartBot.Plugins.kanshufan
         }
 
         [Category("A.核心设置")]
-        [DisplayName("Ⅵ.天梯上限等级")]
+        [DisplayName("Ⅲ.天梯上限等级")]
         public int RankLevel
         {
             get
@@ -193,7 +169,7 @@ namespace SmartBot.Plugins.kanshufan
         }
 
         [Category("A.核心设置")]
-        [DisplayName("Ⅶ.炉石传说-窗口名称")]
+        [DisplayName("Ⅳ.炉石传说-窗口名称")]
         public string Ckmc
         {
             get
@@ -207,7 +183,7 @@ namespace SmartBot.Plugins.kanshufan
         }
 
         [Category("A.核心设置")]
-        [DisplayName("Ⅷ.炉石传说窗口-宽")]
+        [DisplayName("Ⅴ.炉石传说窗口-宽")]
         public int Width
         {
             get
@@ -232,7 +208,7 @@ namespace SmartBot.Plugins.kanshufan
         }
 
         [Category("A.核心设置")]
-        [DisplayName("Ⅸ.炉石传说窗口-高")]
+        [DisplayName("Ⅵ.炉石传说窗口-高")]
         public int Height
         {
             get
@@ -257,7 +233,7 @@ namespace SmartBot.Plugins.kanshufan
         }
 
         [Category("A.核心设置")]
-        [DisplayName("Ⅹ.炉石传说窗口-左上角X坐标")]
+        [DisplayName("Ⅶ.炉石传说窗口-左上角X坐标")]
         public int X
         {
             get
@@ -282,7 +258,7 @@ namespace SmartBot.Plugins.kanshufan
         }
 
         [Category("A.核心设置")]
-        [DisplayName("Ⅺ.炉石传说窗口-左上角Y坐标")]
+        [DisplayName("Ⅷ.炉石传说窗口-左上角Y坐标")]
         public int Y
         {
             get
@@ -888,14 +864,6 @@ namespace SmartBot.Plugins.kanshufan
             if (pluginData.Enabled)
             {
                 InitWindowsForms();
-                //获取炉石传说进程 Hearthstone
-                Process[] HearthstoneProcess = Process.GetProcessesByName("Hearthstone");
-                //自动启动炉石传说
-                if (pluginData.AutoOpenHSAndInject && HearthstoneProcess.Length <= 0)
-                {
-                    Bot.Log("[kanshufan] - 启动炉石传说,准备脚本注入...");
-                    Bot.StartRelogger();
-                }
             }
             base.OnPluginCreated();
         }
@@ -907,12 +875,6 @@ namespace SmartBot.Plugins.kanshufan
         {
             //插件配置信息
             KanShuFanPluginData pluginData = GetPluginData();
-
-            if (pluginData.AutoStart && !Bot.IsBotRunning()) 
-            {
-                Bot.Log("[kanshufan] - SmartBot启动中...");
-                Bot.StartBot();
-            }
 
             //每30秒判断一次
             if (tickIndex == 100)
@@ -950,11 +912,6 @@ namespace SmartBot.Plugins.kanshufan
             if (pluginData.Enabled)
             {
                 InitWindowsForms();
-                if (pluginData.AutoStart)
-                {
-                    Bot.Log("[kanshufan] - 脚本已注入,启动中...");
-                    Bot.StartBot();
-                }
             }
             base.OnInjection();
         }
@@ -1020,7 +977,6 @@ namespace SmartBot.Plugins.kanshufan
                 //判断当前模式天梯等级
                 if (rankLevel < pluginData.rankLevel_)
                 {
-                    Bot.SendEmote(Bot.EmoteType.WellPlayed);
                     Bot.Concede();
                     Bot.Log("[kanshufan] - 天梯等级达到上限,投降...");
                 }
