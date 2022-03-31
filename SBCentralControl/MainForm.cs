@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace SBCentralControl
 {
@@ -31,6 +32,16 @@ namespace SBCentralControl
         /// 启动器所在地址
         /// </summary>
         private static readonly string LauncherPath = Environment.CurrentDirectory + Path.DirectorySeparatorChar.ToString() + "Launcher.exe";
+        /// <summary>
+        /// 中控通信配置文件
+        /// </summary>
+        private static readonly string SBCentralControlIniPath = Environment.CurrentDirectory + Path.DirectorySeparatorChar.ToString() + "SBCentralControl.ini";
+
+        /// <summary>
+        /// 旧输入信息
+        /// </summary>
+        string OldText1 = "炉石传说";
+        string OldText2 = "5";
 
         /// <summary>
         /// 获取窗口句柄
@@ -56,6 +67,17 @@ namespace SBCentralControl
         [DllImport("user32.dll")]
         public static extern bool IsHungAppWindow(IntPtr hWnd);
 
+        /// <summary>
+        /// 修改INI文件中内容
+        /// </summary>
+        /// <param name="lpApplicationName">欲在其中写入的节点名称</param>
+        /// <param name="lpKeyName">欲设置的项名</param>
+        /// <param name="lpString">要写入的新字符串</param>
+        /// <param name="lpFileName">INI文件完整路径</param>
+        /// <returns>非零表示成功，零表示失败</returns>
+        [DllImport("kernel32")]
+        private static extern int WritePrivateProfileString(string lpApplicationName, string lpKeyName, string lpString, string lpFileName);
+
         public MainForm()
         {
             InitializeComponent();
@@ -64,12 +86,14 @@ namespace SBCentralControl
         private void MainForm_Load(object sender, EventArgs e)
         {
             //初始化页面信息
-            textBox1.Text = DetectionFrequency.ToString();
             textBox2.Text = lscs_ckmc;
-            for (int i = 1; i <= 1000; i++)
-            {
-                if()
-            }
+            textBox3.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] SB中控开始运行...";
+            timer1.Stop();
+            Log("以下为配置信息...");
+            LogByNoTime("======================================================");
+            Log("炉石窗口名称: " + lscs_ckmc);
+            Log("中控检测频率: " + DetectionFrequency + "分钟");
+            LogByNoTime("======================================================");
             bool flag = IsNumberic(textBox1.Text);
             if (flag)
             {
@@ -79,6 +103,7 @@ namespace SBCentralControl
             {
                 timer1.Stop();
             }
+            Log("中控运行状态: " + (timer1.Enabled ? "运行中" : "已停止"));
         }
 
         private void MainForm_Activated(object sender, EventArgs e)
@@ -89,7 +114,7 @@ namespace SBCentralControl
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            /*string text = string.Empty;
+            string text = string.Empty;
             if (File.Exists(BasePath))
             {
                 text = File.ReadAllText(BasePath);
@@ -112,21 +137,36 @@ namespace SBCentralControl
                         newProcess.Start();
                     }
                 }
-            }*/
-            /*//获取炉石传说句柄
+            }
+            //获取炉石传说句柄
             IntPtr lscs = FindWindow(null, lscs_ckmc);
             bool hungFlag = IsHungAppWindow(lscs);
             if (hungFlag)
             {
                 //关闭炉石传说
+                SendSmartBotMsg("CloseHs");
                 System.Threading.Thread.Sleep(5000);
                 //开启炉石传说
-            }*/
+                SendSmartBotMsg("StartRelogger");
+            }
         }
 
         private void Text1_change(object sender, EventArgs e)
         {
             lscs_ckmc = textBox2.Text;
+        }
+
+        private void Text1_Leave(object sender, EventArgs e)
+        {
+            if(OldText1 != textBox2.Text)
+            {
+                Log("炉石传说窗口名称修改为: " + lscs_ckmc);
+            }
+        }
+
+        private void TextBox2_MouseClick(object sender, MouseEventArgs e)
+        {
+            OldText1 = textBox2.Text;
         }
 
         private void Text2_change(object sender, EventArgs e)
@@ -143,29 +183,42 @@ namespace SBCentralControl
             }
         }
 
+        private void Text2_Leave(object sender, EventArgs e)
+        {
+            if(OldText2 != textBox1.Text)
+            {
+                Log("中控检测频率修改为: " + textBox1.Text + "分钟");
+            }
+        }
+
+        private void TextBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            OldText2 = textBox1.Text;
+        }
+
         private void Button1_Click(object sender, EventArgs e)
         {
-            string text = string.Empty;
-            if (File.Exists(BasePath))
+            Log(SBCentralControlIniPath);
+            if (File.Exists(SBCentralControlIniPath)) 
             {
-                text = File.ReadAllText(BasePath);
-            }
-            if (!string.IsNullOrWhiteSpace(text))
-            {
-                Process[] processesByName = Process.GetProcessesByName(text.Replace(".exe", ""));
-                foreach (Process process in processesByName)
+                if (!timer1.Enabled)
                 {
-                    //关闭SB
-                    process.Kill();
-                    System.Threading.Thread.Sleep(2000);
-                    //打开SB
-                    Process newProcess = new Process
-                    {
-                        StartInfo = new ProcessStartInfo(LauncherPath)
-                    };
-                    newProcess.Start();
+                    timer1.Start();
+                    button1.Text = "停止运行";
+                    Log("SB中控已启动...");
+                }
+                else
+                {
+                    timer1.Stop();
+                    button1.Text = "开始运行";
+                    Log("SB中控已停止...");
                 }
             }
+            else
+            {
+                Log("SB中控同级目录不存在[SBCentralControl.ini]文件,请检查!");
+            }
+            
         }
 
         private void TextBox3_Enter(object sender, EventArgs e)
@@ -178,6 +231,11 @@ namespace SBCentralControl
             HideCaret(textBox3.Handle);
         }
 
+        /// <summary>
+        /// 判断字符串是否为数字
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         protected bool IsNumberic(string message)
         {
             System.Text.RegularExpressions.Regex rex =
@@ -188,6 +246,38 @@ namespace SBCentralControl
             }
             else
                 return false;
+        }
+
+        /// <summary>
+        /// 空白日志打印
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="flag"></param>
+        private void LogByNoTime(string msg)
+        {
+            textBox3.Text += "\r\n" + msg;
+            textBox3.SelectionStart = textBox3.Text.Length;
+            textBox3.ScrollToCaret();
+        }
+
+        /// <summary>
+        /// 带时间的日志打印
+        /// </summary>
+        /// <param name="msg"></param>
+        private void Log(string msg)
+        {
+            textBox3.Text += "\r\n[" + DateTime.Now.ToString("HH:mm:ss") + "] " + msg;
+            textBox3.SelectionStart = textBox3.Text.Length;
+            textBox3.ScrollToCaret();
+        }
+
+        /// <summary>
+        /// 修改中控通信配置文件
+        /// </summary>
+        /// <param name="methodName"></param>
+        public void SendSmartBotMsg(string methodName) 
+        {
+            WritePrivateProfileString("SmartBot", methodName, true.ToString(), SBCentralControlIniPath);
         }
     }
 }

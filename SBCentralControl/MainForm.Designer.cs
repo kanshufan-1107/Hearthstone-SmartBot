@@ -65,7 +65,10 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(312, 20);
             this.textBox2.TabIndex = 3;
+            this.textBox2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TextBox2_MouseClick);
             this.textBox2.TextChanged += new System.EventHandler(this.Text1_change);
+            this.textBox2.Leave += new System.EventHandler(this.Text1_Leave);
+            this.textBox2.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TextBox2_MouseClick);
             // 
             // label3
             // 
@@ -98,8 +101,12 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(35, 20);
             this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "5";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TextBox1_MouseClick);
             this.textBox1.TextChanged += new System.EventHandler(this.Text2_change);
+            this.textBox1.Leave += new System.EventHandler(this.Text2_Leave);
+            this.textBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TextBox1_MouseClick);
             // 
             // label1
             // 
@@ -123,7 +130,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(410, 27);
             this.button1.TabIndex = 1;
-            this.button1.Text = "测试";
+            this.button1.Text = "开始运行";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
@@ -139,6 +146,7 @@
             // 
             // textBox3
             // 
+            this.textBox3.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox3.Location = new System.Drawing.Point(12, 20);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
