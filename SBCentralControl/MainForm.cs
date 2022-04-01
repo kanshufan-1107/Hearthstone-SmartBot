@@ -174,7 +174,11 @@ namespace SBCentralControl
                         newProcess.Start();
                         sbRestartNum++;
                         textBox5.Text = sbRestartNum + "/" + hsRestartNum;
-                        Log("SmartBot启动成功...");
+                        Process[] processesByName2 = Process.GetProcessesByName(text.Replace(".exe", ""));
+                        if (processesByName2.Length > 0)
+                        {
+                            Log("SmartBot启动成功...");
+                        }
                     }
                 }
             }
@@ -191,7 +195,11 @@ namespace SBCentralControl
                 SendSmartBotMsg("StartRelogger");
                 hsRestartNum++;
                 textBox5.Text = sbRestartNum + "/" + hsRestartNum;
-                Log("炉石传说启动成功...");
+                Process[] processesByName2 = Process.GetProcessesByName("Hearthstone");
+                if (processesByName2.Length > 0)
+                {
+                    Log("炉石传说启动成功...");
+                }
             }
         }
 
