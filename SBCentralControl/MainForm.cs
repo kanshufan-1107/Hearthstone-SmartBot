@@ -150,10 +150,10 @@ namespace SBCentralControl
                         StartInfo = new ProcessStartInfo(LauncherPath)
                     };
                     newProcess.Start();
-                    Log("SmartBot启动中...");
-                    System.Threading.Thread.Sleep(30000);
-                    processesByName = Process.GetProcessesByName(text.Replace(".exe", ""));
-                    if (processesByName.Length > 0)
+                    Log("SmartBot未启动,启动中...");
+                    System.Threading.Thread.Sleep(10000);
+                    Process[] processesByName2 = Process.GetProcessesByName(text.Replace(".exe", ""));
+                    if (processesByName2.Length > 0)
                     {
                         Log("SmartBot启动成功...");
                     }
@@ -163,6 +163,7 @@ namespace SBCentralControl
                     bool processHungFlag = IsHungAppWindow(process.Handle);
                     if (processHungFlag)
                     {
+                        Log("SmartBot未响应,重启中...");
                         //关闭SB
                         process.Kill();
                         //打开SB
@@ -173,6 +174,7 @@ namespace SBCentralControl
                         newProcess.Start();
                         sbRestartNum++;
                         textBox5.Text = sbRestartNum + "/" + hsRestartNum;
+                        Log("SmartBot启动成功...");
                     }
                 }
             }
@@ -181,6 +183,7 @@ namespace SBCentralControl
             bool hungFlag = IsHungAppWindow(lscs);
             if (hungFlag)
             {
+                Log("炉石传说未响应,重启中...");
                 //关闭炉石传说
                 SendSmartBotMsg("CloseHs");
                 System.Threading.Thread.Sleep(5000);
@@ -188,6 +191,7 @@ namespace SBCentralControl
                 SendSmartBotMsg("StartRelogger");
                 hsRestartNum++;
                 textBox5.Text = sbRestartNum + "/" + hsRestartNum;
+                Log("炉石传说启动成功...");
             }
         }
 
@@ -245,6 +249,7 @@ namespace SBCentralControl
                     startTime = DateTime.Now;
                     sbRestartNum = 0;
                     hsRestartNum = 0;
+                    textBox5.Text = sbRestartNum + "/" + hsRestartNum;
                     timer1.Start();
                     timer2.Start();
                     button1.Text = "停止运行";
@@ -274,6 +279,7 @@ namespace SBCentralControl
                     textBox4.Text = "00:00:00";
                     sbRestartNum = 0;
                     hsRestartNum = 0;
+                    textBox5.Text = sbRestartNum + "/" + hsRestartNum;
                     timer1.Stop();
                     timer2.Stop();
                     button1.Text = "开始运行";
