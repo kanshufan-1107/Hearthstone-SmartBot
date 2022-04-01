@@ -178,6 +178,12 @@ namespace SBCentralControl
                         if (processesByName2.Length > 0)
                         {
                             Log("SmartBot启动成功...");
+                            Log("重启炉石...");
+                            //关闭炉石传说
+                            SendSmartBotMsg("CloseHs");
+                            System.Threading.Thread.Sleep(5000);
+                            //开启炉石传说
+                            SendSmartBotMsg("StartRelogger");
                         }
                     }
                 }
