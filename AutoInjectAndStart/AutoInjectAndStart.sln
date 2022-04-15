@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInjectAndStart", "AutoInjectAndStart.csproj", "{5AC1071C-54FA-4139-976C-4825F44D5CED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AC1071C-54FA-4139-976C-4825F44D5CED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AC1071C-54FA-4139-976C-4825F44D5CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AC1071C-54FA-4139-976C-4825F44D5CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AC1071C-54FA-4139-976C-4825F44D5CED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8A47B93D-FEFA-4225-8DC6-6F296980F3BA}
+	EndGlobalSection
+EndGlobal
